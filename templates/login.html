@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'login.js' %}" defer></script>
+{% endblock script %}
+
+
+{% block content %}
+<div class="text-center">
+    <video autoplay="true" id="video-element"></video>
+</div>
+
+<div id="img-element"></div>
+
+<div class="text-center mt-3">
+    <button class="btn btn-primary" id="capture-btn">take photo</button>
+    <button class="btn btn-info" id="reload-btn">reload</button>
+</div>
+<div class="text-center mt-3">
+    <a href="{% url 'register' %}" style="font-size: larger;">Register</a>
+</div>
+{% endblock content %}

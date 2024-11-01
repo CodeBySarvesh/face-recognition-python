@@ -1,0 +1,1 @@
+this is face recognination project in django using "face-recognition" library

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="content-fluid" style="margin: 0px !important;">
+    <div class="col-lg-8 offset-lg-4">
+        <div class="content-header">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0" style="text-align: center;">Register User</h1>
+                    </div>
+                </div>
+        </div>
+        <div class="content">
+            <div class="row">
+                <div class="col-lg-6">
+                    <form class="card" enctype="multipart/form-data" action="/register/" method="post" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="card-body row">
+                            <div class="row">
+                                {% for fields in form %}                         
+                                    <div class="col-md-12" style="padding-bottom: 2%">
+                                        <div class="form-group">
+                                            <label>{{ fields.label }}</label>
+                                            {{ fields }}
+                                            {% if fields.errors %}
+                                                    <span style="color: red;">{{ fields.errors|safe }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% for fields1 in form1 %} 
+                                    <div class="col-md-12" style="padding-bottom: 2%;">
+                                        <div class="form-group">
+                                            <label>{{ fields1.label }}</label>
+                                            {{ fields1 }}
+                                            <div class="camera">
+                                                <video id="video">Video stream not available.</video>
+                                                <button type="button" id="startbutton">Take photo</button>
+                                            </div>
+                                            <canvas id="canvas"></canvas>
+                                            {% if fields1.errors %}
+                                                    <span style="color: red;">{{ fields1.errors|safe }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <input type="text" name="img_url" id="img_url" value="" hidden="true">
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div style="float:right;"  class="float-right">
+                                <a href="   " class="btn btn-danger">
+                                    Discard
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div style="padding: 25px 0px 25px 0px;">
+            <span style="font-size:large;">Already Register?</span><a href="{% url 'login' %}" style="font-size:large;"> Log in here</a>
+        </div>
+    </div>
+</div>
+<script>
+    var inp = $(".form-control").removeAttr('required');
+
+
+    var width = 320;
+    var height = 0;
+    var streaming = false;
+
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+            .then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function (err) {
+                console.log("An error occured! " + err);
+            });
+
+    video.addEventListener('canplay', function (ev) {
+        if (!streaming) {
+            height = video.videoHeight / (video.videoWidth / width);
+            video.setAttribute('width', width);
+            video.setAttribute('height', height);
+            canvas.setAttribute('width', width);
+            canvas.setAttribute('height', height);
+
+            streaming = true;
+        }
+    }, false);
+
+    startbutton.addEventListener('click', function (ev) {
+        takepicture();
+        ev.preventDefault();
+    }, false);
+
+    clearphoto();
+
+    function clearphoto() {
+        var context = canvas.getContext('2d');
+        context.fillStyle = "#AAA";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function takepicture() {
+        var context = canvas.getContext('2d');
+        if (width && height) {
+            canvas.width = width;
+            canvas.height = height;
+            context.drawImage(video, 0, 0, width, height);
+
+            var dataURL = canvas.toDataURL("image/png");
+            if (dataURL && dataURL != "data:,") {
+                // var fileName = generateImageName();
+                // uploadimage(dataURL, fileName);
+                $("#img_url").val(dataURL)
+                console.log("-------------",dataURL)
+                // console.log("????????????????????",fileName)
+            } else {
+                alert("Image not available");
+            }
+        } else {
+            clearphoto();
+        }
+    }
+
+    function generateImageName() {
+        // ... generate image name logic here ...
+        return imageName;
+    }
+
+    function uploadimage(dataurl, filename) {
+        // ... upload logic here ...
+    }
+</script>
+{% endblock %}
